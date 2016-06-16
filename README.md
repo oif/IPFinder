@@ -24,6 +24,8 @@ __正确请求__
 {"ip":"118.184.184.70","geo":"\u6c5f\u82cf\u7701\u5e38\u5dde\u5e02\u5e38\u5dde\u8d1d\u7279\u5eb7\u59c6\u8f6f\u4ef6\u6280\u672f\u6709\u9650\u516c\u53f8\u7535\u4fe1\u6570\u636e\u4e2d\u5fc3\n","responseTime":"0.321887ms"}
 ```
 
+
+
 __非法请求__
 
 例如：http://4399.oxo.cat/118.184.184
@@ -44,7 +46,7 @@ __非法请求__
 
 
 
-字段解释：
+__字段解释__
 
 ``` yaml
 ip: 请求 IP
@@ -62,7 +64,7 @@ errCode: 错误代码
    - 将 <kbd>libs/SQLBase.php</kbd> 中的相关 __DB__ 参数改为你的数据库信息
 2. 导入数据库
    - <kbd>php tools/importIP.php</kbd>
-   - 将所获的的 partition 信息更新到 <kbd>libs/IPFinder.php</kdb> 下的 __getStorageTable()__ 函数中的 <kbd>tables</kdb> 数组
+   - 将所获的的 partition 信息更新到 <kbd>libs/IPFinder.php</kbd> 下的 __getStorageTable()__ 函数中的 <kbd>tables</kdb> 数组
 
    ![Partition](importer.png)
 3. 完成！
