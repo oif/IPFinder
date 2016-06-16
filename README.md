@@ -18,6 +18,17 @@ URL结构：http://4399.oxo.cat/IP地址
 
 
 
+## 使用指北
+
+1. 设置数据库
+   - 将 <kbd>libs/SQLBase.php</kbd> 中的相关 __DB__ 参数改为你的数据库信息
+2. 导入数据库
+   - <kbd>php tools/importIP.php</kbd>
+   - 将所获的的 partition 信息更新到 <kbd>libs/IPFinder.php</kdb> 下的 __getStorageTable()__ 函数中的 <kbd>tables</kdb> 数组
+3. 完成！
+
+
+
 ## 版本差异
 
 ### 数据库存储
