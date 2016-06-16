@@ -8,7 +8,7 @@ IPFinder 是基于 PHP 开发的根据 IP 查询所属物理位置 API，在 Ngi
 
 ***
 
-## API 测试方式
+## API 使用方式
 
 URL结构：http://4399.oxo.cat/IP地址
 
