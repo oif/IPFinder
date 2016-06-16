@@ -2,9 +2,9 @@
 
 IPFinder 是基于 PHP 开发的 IP 查询 API，在 Nginx 1.6.0, Mysql 5.5.40, PHP 5.6.9 下测试通过。
 
-当前版本：Alpha
+当前版本：Alpha [[GitHub]](https://github.com/oif/IPFinder)
 
-相对于 Preview 版本有较大的性能提升（Preview 版本代码请见 preview 分支）
+相对于 Preview 版本有较大的性能提升（Preview 版本代码请见 [preview](https://github.com/oif/IPFinder/tree/preview) 分支）
 
 ***
 
