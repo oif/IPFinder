@@ -12,12 +12,46 @@ IPFinder 是基于 PHP 开发的根据 IP 查询所属物理位置 API，在 Ngi
 
 URL结构：http://4399.oxo.cat/IP地址
 
+
+
+__正确请求__
+
 例如：http://4399.oxo.cat/118.184.184.70
 
 返回结果：
 
 ``` json
-{"ip":"223.5.5.5","geo":"\u6d59\u6c5f\u7701\u676d\u5dde\u5e02\u963f\u91cc\u5df4\u5df4\u963f\u91cc\u4e91AliDNS\u670d\u52a1\u5668\n","responseTime":"0.328986ms"}
+{"ip":"118.184.184.70","geo":"\u6c5f\u82cf\u7701\u5e38\u5dde\u5e02\u5e38\u5dde\u8d1d\u7279\u5eb7\u59c6\u8f6f\u4ef6\u6280\u672f\u6709\u9650\u516c\u53f8\u7535\u4fe1\u6570\u636e\u4e2d\u5fc3\n","responseTime":"0.321887ms"}
+```
+
+__非法请求__
+
+例如：http://4399.oxo.cat/118.184.184
+
+响应结果：
+
+``` json
+{"err":"bad IP","errCode":"2333"}
+```
+
+例如：http://4399.oxo.cat
+
+响应结果：
+
+``` json
+{"err":"Invalid input","errCode":"666"}
+```
+
+
+
+字段解释：
+
+``` yaml
+ip: 请求 IP
+geo: 物理位置
+responseTime: 查询所用时间
+err: 错误提示
+errCode: 错误代码
 ```
 
 
