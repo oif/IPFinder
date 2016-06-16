@@ -3,8 +3,6 @@
 /**
 *
 */
-
-
 define('DB_HOST', '106.187.93.29');
 define('DB_USER', '4399_user');
 define('DB_PASS', '12j3hias6');
@@ -35,9 +33,24 @@ class SQLBase {
         return mysql_query($sql);
     }
 
+    function createTable($i) {
+        $sql = "drop table ip_$i";  // 删除历史数据
+        mysql_query($sql);
+        $sql = "create table ip_$i (
+            id INT NOT NULL AUTO_INCREMENT,
+            startAt INT UNSIGNED NOT NULL,
+            endAt  INT UNSIGNED NOT NULL,
+            geo varchar(255),
+            PRIMARY KEY (id)
+        )";
+        mysql_query($sql);  // 创建表
+        $sql = "ALTER TABLE  `ip_$i` ADD INDEX (  `endAt` )";
+        mysql_query($sql);  // 创建普通索引
+    }
+
     function queryIP($table, $ip) {
         //$sql = "SELECT geo FROM ip_".$table." where '$ip' between startAt and endAt LIMIT 1";
-        $sql = "SELECT geo FROM ip_".$table." where '$ip' <= endAt LIMIT 1";
+        $sql = "SELECT geo FROM ip_".$table." where $ip <= endAt LIMIT 1";
         $result = mysql_query($sql);
         return mysql_fetch_array($result)['geo'];
     }

@@ -4,31 +4,29 @@ include('lib/SQLBase.php');
 
 class IPFinder extends SQLBase {
 
-    protected $ip;
+    public $ip;
+
     function __construct($ip)
     {
-        $this->ip = $ip;
-    }
-
-    function validator() {  // 验证合法 IP
-        if (preg_match('/^(([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]).){3}([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/',$this->ip)) {
-            return true;
-        }
-        return false;
+        $this->ip = ip2long($ip);
     }
 
     function getStorageTable() {    // 获取对应的数据储存表
-        $segment = explode('.', $this->ip);
-        $tables = array(62, 147, 212, 219, 223, 255);
+        $tables = array(1019208517, 1035514387, 1857440693, 2101951965, 3268745471, 3544337407, 3658925698, 3662981000, 3684312051, 3722450404, 3739018005, 4294967295);
         for ($i=0; $i < count($tables); $i++) {
-            if ($segment[0] <= $tables[$i]) {
+            if ($this->ip <= $tables[$i]) {
                 return $i;
             }
         }
     }
 
     function getGeo() { // 获取物理地址
-        return array('ip' => $this->ip, 'geo' => $this->queryIP($this->getStorageTable(), ip2long($this->ip)));
+        $this->connect();    // 连接数据库
+        runtime();
+        $geoInfo = $this->queryIP($this->getStorageTable(), $this->ip);
+        $totalTime = runtime(1);
+        $this->disconnect();    // 释放连接
+        return array('ip' => long2ip($this->ip), 'geo' => $geoInfo, 'responseTime' => $totalTime.'ms');
     }
 }
 
@@ -52,19 +50,14 @@ $apiResponse = array('err' => 'Invalid input', 'errCode' => '666');
 if (!empty($_SERVER['REQUEST_URI'])){
     $url = $_SERVER['REQUEST_URI'];
     $urlArray = explode("/",$url);
-    if (!empty($urlArray[1]) ) {
-        $geo = new IPFinder($urlArray[1]);
-        if ($geo->validator()) {    // 验证所输入的 IP
-            runtime();
-            $geo->connect();
+    $geo = new IPFinder($urlArray[1]);  // 初始化
+    if (!empty($urlArray[1])) {
+        if ($geo->ip) {    // 验证所输入的 IP
             $apiResponse = $geo->getGeo();  // 获取物理地址
-            $apiResponse['responseTime'] = runtime(1).'ms';
-            $geo->disconnect();
         } else {
             $apiResponse = array('err' => 'bad IP', 'errCode' => '2333');  // 非法 IP
         }
     }
 }
-
 
 echo json_encode($apiResponse);

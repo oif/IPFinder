@@ -1,6 +1,6 @@
 <?php
 include('../lib/SQLBase.php');
-define('TABLECOUNT', 6);
+define('RPT', 40000);   // rows per table
 define('IPLIST', 'ip.txt');
 
 function runtime($mode = 0) {   // 运行时间监测
@@ -15,16 +15,12 @@ function runtime($mode = 0) {   // 运行时间监测
     return sprintf("%.3f ms",($s1+$m1-$s0-$m0)*1000);
 }
 
-/**
-*
-*/
 class IPImporter extends SQLBase {
 
     protected $IPTactics;
-    protected $IPList;
 
     function __construct() {
-        $this->IPTactics = $this->deliverIPList();
+        //$this->IPTactics = $this->deliverIPList();
     }
 
     static function IPFormator($row) { // IP 格式化返回
@@ -33,81 +29,57 @@ class IPImporter extends SQLBase {
         $keeper = '';
         $co = 0;
         foreach ($ip as $info) {
-            if (!empty($info)) {
+          if (!empty($info)) {
                 if ($co < 2) {  // 0 为 起始 IP，2 为 结束 IP
                     array_push($result, $info);
                     $co++;
                 } else {
                     $keeper .= $info;   // 将所有物理地址信息去除空格
                 }
-            }
+          }
         }
         array_push($result, $keeper);
         return $result;
     }
 
-    function getStorageTable($ip) { // 分表储存
-        $segment = explode('.', $ip);
-        $tables = $this->IPTactics;
-        for ($i=0; $i < count($tables); $i++) {
-            if ($segment[0] <= $tables[$i]) {
-                return $i;
-            }
-        }
-    }
-
-    static function ASegment($ip) { // 分表储存
-        $segment = explode('.', $ip);
-        return $segment[0];
-    }
-
-    function deliverIPList() {
-        $ipList = fopen(IPLIST, "r") or die("Unable to open file!");
-        $IPDist = array_fill(0, 256, 0);
-        $rowCount = 0;
-        while(!feof($ipList)) {
-            $ip = fgets($ipList);
-            if (empty($ip)) {
-                break;
-            }
-            $row = IPImporter::IPFormator($ip);
-            $IPDist[IPImporter::ASegment($row[0])]++;
-            $rowCount++;
-        }
-        fclose($ipList);
-        $avg = $rowCount/TABLECOUNT;
-        $storageTactics = array();
-        foreach ($IPDist as $seg => $co) {
-            if ($avg <= 0) {
-                array_push($storageTactics, $seg);
-                $avg = $rowCount/TABLECOUNT;
-            } else {
-                $avg -= $co;
-            }
-        }
-        array_push($storageTactics, 255);
-        return $storageTactics;
-    }
-
     function run() {
         $ipList = fopen(IPLIST, "r") or die("Unable to open file!");
-        $this->connect();
+        $IPCounter = 0;
+        $tableRecoder = 0;
+        $this->createTable($tableRecoder);
+        echo "Importing...\n";
+        echo "----------------\n";
+        echo "Partition:\n";
         while(!feof($ipList)) {
             $ip = fgets($ipList);
             if (empty($ip)) {
                 break;
             }
             $row = IPImporter::IPFormator($ip);
-            $this->insertIP($this->getStorageTable($ip), $row);
+            $this->insertIP($tableRecoder, $row);
+            $IPCounter++;
+            if ($IPCounter >= RPT) {    // 切换表
+                echo ip2long($row[1]).', ';
+                $IPCounter = 0;
+                $tableRecoder++;
+                $this->createTable($tableRecoder);
+            }
+
         }
-        $this->disconnect();
+        echo "4294967295\n";
+        echo "----------------\n";
         fclose($ipList);
-        var_dump($this->IPTactics);
+        echo "Created $tableRecoder tables in total\n";
+        echo "All the IP list import finish!\n";
     }
 
 }
 
-runtime();
+
 $importer = new IPImporter();
-$importer->run();
-echo runtime(1);    // 总计运行时间
+$importer->connect();
+echo "Start import IP list...\n";
+runtime();
+$importer->run();   // 导入数据
+echo "Time usage: ".runtime(1)."\n";    // 总计运行时间
+$importer->disconnect();
