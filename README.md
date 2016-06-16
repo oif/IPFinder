@@ -1,6 +1,6 @@
 # IPFinder
 
-IPFinder 是基于 PHP 开发的 IP 查询 API，在 Nginx 1.6.0, Mysql 5.5.40, PHP 5.6.9 下测试通过。
+IPFinder 是基于 PHP 开发的根据 IP 查询所属物理位置 API，在 Nginx 1.6.0, Mysql 5.5.40, PHP 5.6.9 下测试通过。
 
 当前版本：Alpha [[GitHub]](https://github.com/oif/IPFinder)
 
@@ -10,11 +10,15 @@ IPFinder 是基于 PHP 开发的 IP 查询 API，在 Nginx 1.6.0, Mysql 5.5.40, 
 
 ### API 测试方式
 
-测试地址：http://4399.oxo.cat
-
 URL结构：http://4399.oxo.cat/IP地址
 
 例如：http://4399.oxo.cat/118.184.184.70
+
+返回结果：
+
+``` json
+{"ip":"223.5.5.5","geo":"\u6d59\u6c5f\u7701\u676d\u5dde\u5e02\u963f\u91cc\u5df4\u5df4\u963f\u91cc\u4e91AliDNS\u670d\u52a1\u5668\n","responseTime":"0.328986ms"}
+```
 
 
 
@@ -25,6 +29,8 @@ URL结构：http://4399.oxo.cat/IP地址
 2. 导入数据库
    - <kbd>php tools/importIP.php</kbd>
    - 将所获的的 partition 信息更新到 <kbd>libs/IPFinder.php</kdb> 下的 __getStorageTable()__ 函数中的 <kbd>tables</kdb> 数组
+
+   ![Partition](importer.png)
 3. 完成！
 
 
