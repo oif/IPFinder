@@ -1,21 +1,10 @@
 <?php
-include('../lib/SQLBase.php');
+include 'SQLBase.php';
+
 define('RPT', 40000);   // rows per table
-define('IPLIST', 'ip.txt');
+define('IPLIST', '../tools/ip.txt');
 
-function runtime($mode = 0) {   // 运行时间监测
-    static $t;
-    if(!$mode) {
-        $t = microtime();
-        return;
-    }
-    $t1 = microtime();
-    list($m0,$s0) = split(" ",$t);
-    list($m1,$s1) = split(" ",$t1);
-    return sprintf("%.3f ms",($s1+$m1-$s0-$m0)*1000);
-}
-
-class IPImporter extends SQLBase {
+class Importer extends SQLBase {
 
     protected $IPTactics;
 
@@ -55,7 +44,7 @@ class IPImporter extends SQLBase {
             if (empty($ip)) {
                 break;
             }
-            $row = IPImporter::IPFormator($ip);
+            $row = Importer::IPFormator($ip);
             $this->insertIP($tableRecoder, $row);
             $IPCounter++;
             if ($IPCounter >= RPT) {    // 切换表
@@ -75,11 +64,14 @@ class IPImporter extends SQLBase {
 
 }
 
-
-$importer = new IPImporter();
-$importer->connect();
-echo "Start import IP list...\n";
-runtime();
-$importer->run();   // 导入数据
-echo "Time usage: ".runtime(1)."\n";    // 总计运行时间
-$importer->disconnect();
+function runtime($mode = 0) {   // 运行时间监测
+    static $t;
+    if(!$mode) {
+        $t = microtime();
+        return;
+    }
+    $t1 = microtime();
+    list($m0,$s0) = split(" ",$t);
+    list($m1,$s1) = split(" ",$t1);
+    return sprintf("%.3f ms",($s1+$m1-$s0-$m0)*1000);
+}

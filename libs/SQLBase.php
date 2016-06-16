@@ -36,16 +36,16 @@ class SQLBase {
     function createTable($i) {
         $sql = "drop table ip_$i";  // 删除历史数据
         mysql_query($sql);
+        // 唯一索引、非空
         $sql = "create table ip_$i (
             id INT NOT NULL AUTO_INCREMENT,
             startAt INT UNSIGNED NOT NULL,
             endAt  INT UNSIGNED NOT NULL,
             geo varchar(255),
-            PRIMARY KEY (id)
+            PRIMARY KEY (id),
+            UNIQUE (endAt)
         )";
         mysql_query($sql);  // 创建表
-        $sql = "ALTER TABLE  `ip_$i` ADD INDEX (  `endAt` )";
-        mysql_query($sql);  // 创建普通索引
     }
 
     function queryIP($table, $ip) {
